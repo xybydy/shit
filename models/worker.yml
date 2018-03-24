@@ -1,0 +1,53 @@
+- ws1:
+  name: "WS1"
+  x: 3 #x location
+  y: 4 #y location
+  speed: 1
+  load_time: 2
+  unload_time: 3
+  requirements: 
+    - M1
+    - M3
+
+- ws2:
+  name: "WS2"
+  x: 5 #x location
+  y: 12 #y location
+  speed: 1
+  load_time: 2
+  unload_time: 3
+  requirements: 
+    - M1
+    - M3
+
+- ws3:
+  name: "WS2"
+  x: 8 #x location
+  y: 6 #y location
+  speed: 1
+  load_time: 2
+  unload_time: 3
+  requirements: 
+    - M1
+    - M3
+
+- ws4:
+  name: "WS2"
+  x: 12 #x location
+  y: 10 #y location
+  speed: 1
+  load_time: 2
+  unload_time: 3
+  requirements: 
+    - M1
+    - M3
+
+- ws5:
+  name: "WS4"
+  x: 13 #x location
+  y: 3 #y location
+  speed: 4
+  load_time: 2
+  unload_time: 3
+  requirements: 
+    - M5

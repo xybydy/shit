@@ -1,0 +1,29 @@
+- m1:
+  name: "M1"
+  type: "raw" #raw, semi, finished
+  size: 1
+  process_time: 1
+
+- m2:
+  name: "M2"
+  type: "raw" #raw, semi, finished
+  size: 2
+  process_time: 2
+
+- m3:
+  name: "M3"
+  type: "raw" #raw, semi, finished
+  size: 2
+  process_time: 1
+
+- m4:
+  name: "M4"
+  type: "raw" #raw, semi, finished
+  size: 5
+  process_time: 2
+
+- m5:
+  name: "M5"
+  type: "raw" #raw, semi, finished
+  size: 10
+  process_time: 4

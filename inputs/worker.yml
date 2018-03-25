@@ -1,7 +1,7 @@
 - ws1:
   name: "WS1"
-  x: 3 #x location
-  y: 4 #y location
+  x: 8 #x location
+  y: 6 #y location
   speed: 1
   load_time: 2
   unload_time: 3
@@ -11,8 +11,8 @@
 
 - ws2:
   name: "WS2"
-  x: 5 #x location
-  y: 12 #y location
+  x: 3 #x location
+  y: 4 #y location
   speed: 1
   load_time: 2
   unload_time: 3
@@ -22,8 +22,8 @@
 
 - ws3:
   name: "WS2"
-  x: 8 #x location
-  y: 6 #y location
+  x: 5 #x location
+  y: 12 #y location
   speed: 1
   load_time: 2
   unload_time: 3
@@ -49,5 +49,5 @@
   speed: 4
   load_time: 2
   unload_time: 3
-  requirements: 
+  requirements:
     - M5

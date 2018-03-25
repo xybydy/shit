@@ -1,10 +1,16 @@
 package models
 
-type Workstations []Workstation
+import (
+	"io/ioutil"
+	"fmt"
+	"github.com/go-yaml/yaml"
+)
+
+type Workstations []*Workstation
 
 type Workstation struct {
-	X int
-	Y int
+	X            int
+	Y            int
 	Name         string
 	Speed        int
 	LoadTime     int `yaml:"load_time"`
@@ -12,7 +18,28 @@ type Workstation struct {
 	Requirements []string
 }
 
-func (w *Workstation) parseRequirements() {
-	//ret := make(Materials, len(w.Requirements))
+func LoadWorkstations() Workstations {
+	var workstations Workstations
 
+	f, err := ioutil.ReadFile("inputs/worker.yml")
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	err = yaml.Unmarshal(f, &workstations)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return workstations
+
+}
+
+func GetWorkstation(x, y int, w Workstations) *Workstation {
+	for _, station := range w {
+		if station.X == x && station.Y == y {
+			return station
+		}
+	}
+	return nil
 }

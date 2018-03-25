@@ -3,6 +3,7 @@ package solver
 import (
 	"fmt"
 	"strings"
+	"shit/models"
 )
 
 type Map map[int]map[int]*Tile
@@ -75,8 +76,6 @@ func (m Map) GetKind(kind int) Tiles {
 	return kinds
 }
 
-// Get kind hic bozma, yeni method olustur, sorted workstation gelsin hatta priorityqueue bunun icin iyi olabilir.
-
 func ParseMap(input string) Map {
 	m := Map{}
 	for x, row := range strings.Split(strings.TrimSpace(input), "\n") {
@@ -90,4 +89,28 @@ func ParseMap(input string) Map {
 		}
 	}
 	return m
+}
+
+func (m Map) CrossCheck() bool {
+	for _, row := range m {
+		for _, col := range row {
+			if col.Kind == Workstation {
+				stations := models.LoadWorkstations()
+				r := models.GetWorkstation(col.X, col.Y, stations)
+				if r == nil {
+					fmt.Println(col.X, col.Y, " does not match")
+					return false
+				}
+			} else if col.Kind == Start {
+				train := models.LoadTrain()
+				r := models.GetTrain(col.X, col.Y, train)
+				if r == nil {
+					fmt.Println("Train does not match")
+					return false
+				}
+			}
+
+		}
+	}
+	return true
 }

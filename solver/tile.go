@@ -14,7 +14,8 @@ func (t Tiles) Swap(i, j int) { t[i], t[j] = t[j], t[i] }
 
 type Tile struct {
 	Kind int
-	X, Y int
+	X    int
+	Y    int
 	W    Map
 }
 

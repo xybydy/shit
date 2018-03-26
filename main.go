@@ -3,7 +3,7 @@ package main
 import (
 	"shit/solver"
 	"fmt"
-	"shit/utils"
+	"shit/models"
 )
 
 func buildRoute(workstations solver.Tiles, storage *solver.Tile) solver.Options {
@@ -27,21 +27,25 @@ func buildRoute(workstations solver.Tiles, storage *solver.Tile) solver.Options 
 		options = options.Append(&solver.Option{route, totalCost})
 
 	}
-
 	return options
-
 }
 
 func main() {
+	models.LoadMaterials()
+	qwe := models.LoadWorkstations()
+	t := models.LoadTrain()
 
-	harita := solver.ParseMap(utils.GetMaze())
+	t.LoadFromStorage(qwe)
+	w1 := qwe[0]
+
+	fmt.Println(t.CurrentCapacity)
+	t.Unload(w1)
+	fmt.Println(t.CurrentCapacity)
+
+
+	//harita := solver.ParseMap(utils.GetMaze())
 
 	//storage := harita.GetKind(solver.Start)[0]
-	//workstations := harita.GetKind(solver.Workstation)
-	//qwe := models.LoadWorkstations()
-	//e := models.LoadMaterials()
-	fmt.Println(harita.CrossCheck())
-
 	//routes := buildRoute(workstations, storage)
 	//routes.ShowAllResults()
 

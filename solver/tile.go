@@ -17,6 +17,7 @@ type Tile struct {
 	X    int
 	Y    int
 	W    Map
+	Base interface{}
 }
 
 func (t *Tile) PathNeighbors() []Pather {
@@ -51,6 +52,15 @@ func (t *Tile) PathEstimatedCost(to Pather) float64 {
 	}
 	return float64(absX + absY)
 }
+
+func (t *Tile) SetBase(){
+	
+
+}
+
+
+
+
 
 func GetPermutation(tiles Tiles) []Tiles {
 	var routes []Tiles

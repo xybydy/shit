@@ -6,8 +6,8 @@
   load_time: 2
   unload_time: 3
   requirements: 
-    - M1
-    - M3
+    - M1,5
+    - M3,2
 
 - ws2:
   name: "WS2"
@@ -17,8 +17,8 @@
   load_time: 2
   unload_time: 3
   requirements: 
-    - M1
-    - M3
+    - M1,2
+    - M3,4
 
 - ws3:
   name: "WS2"
@@ -28,8 +28,8 @@
   load_time: 2
   unload_time: 3
   requirements: 
-    - M1
-    - M3
+    - M1,3
+    - M3,5
 
 - ws4:
   name: "WS2"
@@ -39,8 +39,8 @@
   load_time: 2
   unload_time: 3
   requirements: 
-    - M1
-    - M3
+    - M1,6
+    - M3,10
 
 - ws5:
   name: "WS4"
@@ -50,4 +50,4 @@
   load_time: 2
   unload_time: 3
   requirements:
-    - M5
+    - M5,8

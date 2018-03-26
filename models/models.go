@@ -19,3 +19,4 @@ func (n Nodes) Get(x, y int) (*Node, error) {
 	}
 	return nil, errors.New("Out of bounds")
 }
+

@@ -3,7 +3,10 @@ package solver
 import (
 	"fmt"
 	"strings"
+	"time"
+
 	"shit/models"
+	"shit/pather"
 )
 
 type Map map[int]map[int]*Tile
@@ -25,6 +28,10 @@ func (m Map) SetTile(t *Tile, x, y int) {
 	t.W = m
 }
 
+func (m Map) GetTile(x, y int) *Tile {
+	return m[x][y]
+}
+
 func (m Map) FirstOfKind(kind int) *Tile {
 	for _, row := range m {
 		for _, t := range row {
@@ -34,34 +41,6 @@ func (m Map) FirstOfKind(kind int) *Tile {
 		}
 	}
 	return nil
-}
-
-func (m Map) RenderPath(path []Pather) string {
-	width := len(m)
-	if width == 0 {
-		return ""
-	}
-	height := len(m[0])
-
-	pathLocs := map[string]bool{}
-	for _, p := range path {
-		pT := p.(*Tile)
-		pathLocs[fmt.Sprintf("%d,%d", pT.X, pT.Y)] = true
-	}
-	rows := make([]string, height)
-	for x := 0; x < width; x++ {
-		for y := 0; y < height; y++ {
-			t := m.Tile(x, y)
-			r := ' '
-			if pathLocs[fmt.Sprintf("%d,%d", x, y)] {
-				r = TypeRunes[FinalPath]
-			} else if t != nil {
-				r = TypeRunes[t.Kind]
-			}
-			rows[y] += string(r)
-		}
-	}
-	return strings.Join(rows, "\n")
 }
 
 func (m Map) GetKind(kind int) Tiles {
@@ -101,7 +80,7 @@ func (m Map) CrossCheck() bool {
 					fmt.Println(col.X, col.Y, " does not match")
 					return false
 				}
-			} else if col.Kind == Start {
+			} else if col.Kind == Train {
 				train := models.LoadTrain()
 				r := models.GetTrain(col.X, col.Y, train)
 				if r == nil {
@@ -113,4 +92,42 @@ func (m Map) CrossCheck() bool {
 		}
 	}
 	return true
+}
+
+func (m Map) renderMap(path []pather.Pather) string {
+	width := len(m)
+	if width == 0 {
+		return ""
+	}
+	height := len(m[0])
+
+	pathLocs := map[string]bool{}
+	for _, p := range path {
+		pT := p.(*Tile)
+		pathLocs[fmt.Sprintf("%d,%d", pT.X, pT.Y)] = true
+	}
+
+	rows := make([]string, height)
+	for x := 0; x < width; x++ {
+		for y := 0; y < height; y++ {
+			t := m.Tile(x, y)
+			r := ' '
+			if pathLocs[fmt.Sprintf("%d,%d", x, y)] {
+				r = TypeRunes[FinalPath]
+			} else if t != nil {
+				r = TypeRunes[t.Kind]
+			}
+			rows[y] += string(r)
+		}
+	}
+	return strings.Join(rows, "\n")
+}
+
+func (m Map) PrintMap(path [][]pather.Pather) {
+
+	for i := 0; i < len(path); i++ {
+		fmt.Printf("\n\nPath iste: \n%s\r", m.renderMap(path[i]))
+		time.Sleep(100 * time.Millisecond)
+	}
+
 }

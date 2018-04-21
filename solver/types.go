@@ -1,9 +1,9 @@
 package solver
 
 const (
-	Road        = iota
+	Road = iota
 	Wall
-	Start
+	Train
 	Workstation
 	FinalPath
 )
@@ -12,7 +12,7 @@ var TypeRunes = map[int]rune{
 	Road:        '.',
 	Wall:        '#',
 	Workstation: 'W',
-	Start:       'S',
+	Train:       'T',
 	FinalPath:   '●',
 }
 
@@ -20,10 +20,10 @@ var RuneType = map[rune]int{
 	'.': Road,
 	'#': Wall,
 	'W': Workstation,
-	'S': Start,
+	'T': Train,
 }
 
 var Costs = map[int]float64{
 	Road:  1.0,
-	Start: 1.0,
+	Train: 1.0,
 }

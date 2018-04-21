@@ -1,12 +1,13 @@
 package solver
 
-import "fmt"
+import "shit/pather"
 
 type Options []*Option
 
 type Option struct {
 	Route Tiles
 	Cost  float64
+	Path  [][]pather.Pather
 }
 
 func (o Options) Append(op ...*Option) Options {
@@ -32,8 +33,6 @@ func (o Options) GetBestResult() *Option {
 	return bestOption
 }
 
-func (o Options) ShowAllResults() {
-	for _, option := range o {
-		fmt.Printf("Cost: %v, Route: %v\n", option.Cost, option.Route)
-	}
+func (o Option) Len() int {
+	return len(o.Route)
 }

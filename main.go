@@ -1,52 +1,76 @@
 package main
 
 import (
-	"shit/solver"
 	"fmt"
-	"shit/models"
+
+	"shit/pather"
+	"shit/solver"
+	"shit/utils"
 )
 
-func buildRoute(workstations solver.Tiles, storage *solver.Tile) solver.Options {
+var harita solver.Map
+var train *solver.Tile
+var workstations solver.Tiles
+
+func buildRoute(workstations solver.Tiles, train *solver.Tile) solver.Options {
 	var options solver.Options
 	routes := solver.GetPermutation(workstations)
 
 	for _, route := range routes {
 		var totalCost float64
-		route = append(route, storage)
-		route = append([]*solver.Tile{storage}, route...)
+		paths := make([][]pather.Pather, 0)
+		route = append(route, train)
+		route = append([]*solver.Tile{train}, route...)
 
 		for i := 1; i < len(route); i++ {
-			_, cost, found := solver.Path(route[i], route[i-1])
+			path, cost, found := pather.Path(route[i], route[i-1])
 
 			if !found {
 				fmt.Println("Cant't find the route")
 			} else {
 				totalCost += cost
+				paths = append(paths, path)
 			}
 		}
-		options = options.Append(&solver.Option{route, totalCost})
+		options = options.Append(&solver.Option{route, totalCost, paths})
 
 	}
 	return options
 }
 
 func main() {
-	models.LoadMaterials()
-	qwe := models.LoadWorkstations()
-	t := models.LoadTrain()
+	//models.LoadMaterials()
+	//qwe := models.LoadWorkstations()
+	//t := models.LoadTrain()
+	//
+	//t.LoadFromStorage(qwe)
+	//w1 := qwe[0]
+	//
+	//fmt.Println(t.CurrentCapacity)
+	//t.Unload(w1)
+	//fmt.Println(t.CurrentCapacity)
 
-	t.LoadFromStorage(qwe)
-	w1 := qwe[0]
+	//alt kismi map
+	getResult()
 
-	fmt.Println(t.CurrentCapacity)
-	t.Unload(w1)
-	fmt.Println(t.CurrentCapacity)
+}
 
+func getResult() {
+	harita = solver.ParseMap(utils.GetMaze())
+	train = harita.GetKind(solver.Train)[0]
+	workstations = harita.GetKind(solver.Workstation)
+	routes := buildRoute(workstations, train)
 
-	//harita := solver.ParseMap(utils.GetMaze())
+	bestRoute := routes.GetBestResult()
 
-	//storage := harita.GetKind(solver.Start)[0]
-	//routes := buildRoute(workstations, storage)
-	//routes.ShowAllResults()
+	printRoute(*bestRoute)
+
+}
+
+func printRoute(o solver.Option) {
+
+	fmt.Printf("The best route's cost is %v\n", o.Cost)
+
+	harita.PrintMap(o.Path)
 
 }

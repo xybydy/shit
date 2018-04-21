@@ -1,14 +1,17 @@
 package models
 
 import (
-	"io/ioutil"
 	"fmt"
+	"io/ioutil"
+
 	"github.com/go-yaml/yaml"
 )
 
 type Train struct {
 	X               int
 	Y               int
+	currentX        int
+	currentY        int
 	Name            string
 	MaxCapacity     int `yaml:"capacity"`
 	Speed           int

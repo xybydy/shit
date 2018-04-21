@@ -1,11 +1,12 @@
 package models
 
 import (
-	"io/ioutil"
 	"fmt"
-	"github.com/go-yaml/yaml"
-	"strings"
+	"io/ioutil"
 	"strconv"
+	"strings"
+
+	"github.com/go-yaml/yaml"
 )
 
 type Workstations []*Workstation
@@ -14,9 +15,10 @@ type Workstation struct {
 	X            int
 	Y            int
 	Name         string
+	Status       bool `yaml:"-"`
 	Speed        int
-	LoadTime     int       `yaml:"load_time"`
-	UnloadTime   int       `yaml:"unload_time"`
+	LoadTime     int `yaml:"load_time"`
+	UnloadTime   int `yaml:"unload_time"`
 	Requirements []string
 	LoadedItems  Materials `yaml:"-"`
 	ReadyItems   Materials `yaml:"-"`
@@ -55,7 +57,6 @@ func LoadWorkstations() Workstations {
 	}
 
 	return workstations
-
 }
 
 func GetWorkstation(x, y int, w Workstations) *Workstation {

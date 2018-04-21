@@ -1,27 +1,21 @@
 package solver
 
 import (
-	"github.com/gitchander/permutation"
+	"fmt"
+
+	"shit/models"
+	"shit/pather"
 )
-
-type Tiles []*Tile
-
-func (t Tiles) Len() int {
-	return len(t)
-}
-
-func (t Tiles) Swap(i, j int) { t[i], t[j] = t[j], t[i] }
 
 type Tile struct {
 	Kind int
 	X    int
 	Y    int
 	W    Map
-	Base interface{}
 }
 
-func (t *Tile) PathNeighbors() []Pather {
-	var neighbors []Pather
+func (t *Tile) PathNeighbors() []pather.Pather {
+	var neighbors []pather.Pather
 	for _, offset := range [][]int{
 		{-1, 0},
 		{1, 0},
@@ -35,12 +29,12 @@ func (t *Tile) PathNeighbors() []Pather {
 	return neighbors
 }
 
-func (t *Tile) PathNeighborCost(to Pather) float64 {
+func (t *Tile) PathNeighborCost(to pather.Pather) float64 {
 	toT := to.(*Tile)
 	return Costs[toT.Kind]
 }
 
-func (t *Tile) PathEstimatedCost(to Pather) float64 {
+func (t *Tile) PathEstimatedCost(to pather.Pather) float64 {
 	toT := to.(*Tile)
 	absX := toT.X - t.X
 	if absX < 0 {
@@ -53,25 +47,27 @@ func (t *Tile) PathEstimatedCost(to Pather) float64 {
 	return float64(absX + absY)
 }
 
-func (t *Tile) SetBase(){
-	
+func (t *Tile) Get() interface{} {
+	if t.Kind == Train {
+		train := models.LoadTrain()
+		r := models.GetTrain(t.X, t.Y, train)
+		if r == nil {
+			fmt.Println("Train does not match")
+			return nil
+		} else {
+			return r
+		}
+	} else if t.Kind == Workstation {
+		stations := models.LoadWorkstations()
+		r := models.GetWorkstation(t.X, t.Y, stations)
+		if r == nil {
+			fmt.Println(t.X, t.Y, " does not match")
+			return nil
+		} else {
+			return r
+		}
 
-}
-
-
-
-
-
-func GetPermutation(tiles Tiles) []Tiles {
-	var routes []Tiles
-
-	p := permutation.New(tiles)
-	for p.Scan() {
-		q := make(Tiles, len(tiles))
-		copy(q, tiles)
-		routes = append(routes, q)
 	}
-
-	return routes
+	return nil
 
 }

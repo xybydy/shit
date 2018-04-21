@@ -1,4 +1,4 @@
-package solver
+package pather
 
 // A PriorityQueue implements heap.Interface and holds Nodes.  The
 // PriorityQueue is used to track open nodes by rank.

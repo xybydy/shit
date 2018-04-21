@@ -1,4 +1,4 @@
-package solver
+package pather
 
 import (
 	"container/heap"

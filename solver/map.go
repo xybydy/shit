@@ -123,11 +123,9 @@ func (m Map) renderMap(path []pather.Pather) string {
 	return strings.Join(rows, "\n")
 }
 
-func (m Map) PrintMap(path [][]pather.Pather) {
+func (m Map) PrintMap(path []pather.Pather) {
 
-	for i := 0; i < len(path); i++ {
-		fmt.Printf("\n\nPath iste: \n%s\r", m.renderMap(path[i]))
-		time.Sleep(100 * time.Millisecond)
-	}
+	fmt.Printf("\n%s\r", m.renderMap(path))
+	time.Sleep(100 * time.Millisecond)
 
 }

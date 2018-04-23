@@ -1,10 +1,11 @@
 package models
 
 import (
-	"io/ioutil"
-	"fmt"
-	"github.com/go-yaml/yaml"
 	"errors"
+	"fmt"
+	"io/ioutil"
+
+	"github.com/go-yaml/yaml"
 )
 
 var LoadedMaterials Materials
@@ -18,13 +19,13 @@ type Material struct {
 	ProcessTime int `yaml:"process_time"`
 }
 
-func (m Materials) Get(name string) Material {
+func (m Materials) Get(name string) (Material, error) {
 	for i := 0; i < len(m); i++ {
 		if m[i].Name == name {
-			return m[i]
+			return m[i], nil
 		}
 	}
-	return Material{}
+	return Material{}, errors.New(fmt.Sprintf("There is no such material specs: %s", name))
 }
 
 func (m Materials) Pop(name string) (Material, error) {

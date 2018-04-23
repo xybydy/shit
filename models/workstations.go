@@ -30,13 +30,27 @@ func (w *Workstation) GetRequirements() ([]Material, []int) {
 
 	for _, r := range w.Requirements {
 		s := strings.Split(r, ",")
-		material := LoadedMaterials.Get(s[0])
+		material, err := LoadedMaterials.Get(s[0])
+		if err != nil {
+			fmt.Println(err)
+		}
 		materials = append(materials, material)
 		amount, _ := strconv.Atoi(s[1])
 		amounts = append(amounts, amount)
 	}
 
 	return materials, amounts
+}
+
+func (w *Workstation) PrintRequirements() string {
+	var finalString string
+	reqs, amts := w.GetRequirements()
+
+	for i := 0; i < len(reqs); i++ {
+		finalString += fmt.Sprintf("  %s: %d\n", reqs[i].Name, amts[i])
+
+	}
+	return finalString
 }
 
 func (w *Workstation) LoadMaterial(m Material) {

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"shit/models"
 	"shit/pather"
 	"shit/solver"
 	"shit/utils"
@@ -11,6 +12,11 @@ import (
 var harita solver.Map
 var train *solver.Tile
 var workstations solver.Tiles
+var options solver.Options
+var bestOption *solver.Option
+
+var trainModel models.Train
+var workstationsModels models.Workstations
 
 func buildRoute(workstations solver.Tiles, train *solver.Tile) solver.Options {
 	var options solver.Options
@@ -39,18 +45,10 @@ func buildRoute(workstations solver.Tiles, train *solver.Tile) solver.Options {
 }
 
 func main() {
-	//models.LoadMaterials()
-	//qwe := models.LoadWorkstations()
-	//t := models.LoadTrain()
-	//
-	//t.LoadFromStorage(qwe)
-	//w1 := qwe[0]
-	//
-	//fmt.Println(t.CurrentCapacity)
-	//t.Unload(w1)
-	//fmt.Println(t.CurrentCapacity)
-
-	//alt kismi map
+	models.LoadMaterials()
+	workstationsModels = models.LoadWorkstations()
+	trainModel = models.LoadTrain()
+	trainModel.LoadFromStorage(workstationsModels)
 	getResult()
 
 }
@@ -59,18 +57,63 @@ func getResult() {
 	harita = solver.ParseMap(utils.GetMaze())
 	train = harita.GetKind(solver.Train)[0]
 	workstations = harita.GetKind(solver.Workstation)
-	routes := buildRoute(workstations, train)
+	options = buildRoute(workstations, train)
 
-	bestRoute := routes.GetBestResult()
+	bestOption = options.GetBestResult()
 
-	printRoute(*bestRoute)
+	printRoute(*bestOption)
 
 }
 
 func printRoute(o solver.Option) {
 
-	fmt.Printf("The best route's cost is %v\n", o.Cost)
+	fmt.Printf("Train Specs:\n-----------------\nLocation: %d,%d\nCapacity: %d\n\n", trainModel.X, trainModel.Y, trainModel.MaxCapacity)
 
-	harita.PrintMap(o.Path)
+	fmt.Printf("Workstations\n-----------------\n")
 
+	for i := 0; i < len(workstationsModels); i++ {
+		var mat_sep = workstationsModels[i].PrintRequirements()
+
+		fmt.Printf("\nName: %s\nLocation: %d,%d\nProcess Time: %d\nLoad Time: %d\nUnload Time: %d\nMaterials Demand:\n%s\n-----------------\n",
+			workstationsModels[i].Name, workstationsModels[i].X, workstationsModels[i].Y,
+			workstationsModels[i].Speed, workstationsModels[i].LoadTime, workstationsModels[i].UnloadTime, mat_sep)
+	}
+
+	for i := 0; i < len(o.Path); i++ {
+		if i == 0 {
+			//from := o.Path[i][0].(*solver.Tile).Get().(*models.Train)
+			to := o.Path[i][len(o.Path[i])-1].(*solver.Tile).Get().(*models.Workstation)
+
+			fmt.Printf("\nFrom starting point to %s\n", to.Name)
+
+			fmt.Printf("Train Stock: %s\n", trainModel.Stock.Details())
+
+			fmt.Printf("\nWarehouse demands:\n%s", to.PrintRequirements())
+			fmt.Printf("Load Time: %d\n", to.LoadTime)
+			trainModel.Unload(to)
+
+			harita.PrintMap(o.Path[i])
+
+		} else if i == len(o.Path)-1 {
+			from := o.Path[i][0].(*solver.Tile).Get().(*models.Workstation)
+			//to := o.Path[i][len(o.Path[i])-1].(*solver.Tile).Get().(*models.Train)
+
+			fmt.Printf("From %s back to storage\n", from.Name)
+
+			harita.PrintMap(o.Path[i])
+
+		} else {
+			from := o.Path[i][0].(*solver.Tile).Get().(*models.Workstation)
+			to := o.Path[i][len(o.Path[i])-1].(*solver.Tile).Get().(*models.Workstation)
+			fmt.Printf("\nFrom %s to %s\n", from.Name, to.Name)
+			fmt.Printf("Train Stock: %s\n", trainModel.Stock.Details())
+			fmt.Printf("\nWarehouse demands:\n%s", to.PrintRequirements())
+			fmt.Printf("Load Time: %d\n", to.LoadTime)
+			trainModel.Unload(to)
+
+			harita.PrintMap(o.Path[i])
+
+		}
+
+	}
 }

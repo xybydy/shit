@@ -4,38 +4,42 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"shit/utils"
+
 	"github.com/go-yaml/yaml"
 )
 
 type Train struct {
 	X               int
 	Y               int
-	currentX        int
-	currentY        int
 	Name            string
 	MaxCapacity     int `yaml:"capacity"`
 	Speed           int
-	ingredients     Materials
+	Stock           Inventories
 	CurrentCapacity int
 }
 
-//Ilk stok doldurmayi neye gore yapacaklar.
-//Simdilik tren bir kerelik tum workstationlara ait olan mallari topluyor
 func (t *Train) LoadFromStorage(w Workstations) {
 	for _, station := range w {
 		reqs, reqAmount := station.GetRequirements()
-		for i, amount := range reqAmount {
-			for j := 0; j < amount; j++ {
-				t.ingredients = append(t.ingredients, reqs[i])
-				t.CurrentCapacity += reqs[i].Size
+		for i, req := range reqs {
+
+			if t.MaxCapacity-t.CurrentCapacity > reqAmount[i]*req.Size {
+				t.Stock = t.Stock.Add(req, reqAmount[i]*req.Size)
+				t.CurrentCapacity += req.Size * reqAmount[i]
+			} else {
+				div, _ := utils.DivMod(t.MaxCapacity-t.CurrentCapacity,
+					req.Size)
+				t.CurrentCapacity += req.Size * div
+				t.Stock = t.Stock.Add(req, div*req.Size)
 			}
 		}
 	}
 }
 
-func (t *Train) UnloadMaterial(materialName string) bool {
+func (t *Train) unloadMaterial(materialName string) bool {
 	if t.checkStock(materialName) {
-		q, err := t.ingredients.Pop(materialName)
+		q, err := t.Stock.Pop(materialName)
 		if err != nil {
 			fmt.Printf("There is no item %s\n", materialName)
 		}
@@ -50,17 +54,11 @@ func (t *Train) UnloadMaterial(materialName string) bool {
 }
 
 func (t *Train) checkStock(material string) bool {
-	if t.ingredients.Get(material) == (Material{}) {
+	if t.Stock.Get(material) == (Material{}) {
 		return false
 	} else {
 		return true
 	}
-}
-
-func (t *Train) RemainingMaterials() []Material {
-
-	return t.ingredients
-
 }
 
 func (t *Train) Unload(w *Workstation) {
@@ -68,12 +66,13 @@ func (t *Train) Unload(w *Workstation) {
 
 	for i, material := range reqs {
 		for j := 0; j < req_am[i]; j++ {
-			if t.UnloadMaterial(material.Name) {
+			if t.unloadMaterial(material.Name) {
 				w.LoadMaterial(material)
 			} else {
 				fmt.Println("Burasin sonra halledicez.")
 			}
 		}
+
 	}
 }
 
@@ -89,9 +88,7 @@ func LoadTrain() Train {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	return train
-
 }
 
 func GetTrain(x, y int, t Train) *Train {

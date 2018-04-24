@@ -53,8 +53,9 @@ func (w *Workstation) PrintRequirements() string {
 	return finalString
 }
 
-func (w *Workstation) LoadMaterial(m Material) {
+func (w *Workstation) LoadMaterial(m Material) int {
 	w.LoadedItems = append(w.LoadedItems, m)
+	return w.LoadTime
 }
 
 func LoadWorkstations() Workstations {

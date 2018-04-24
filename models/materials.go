@@ -1,3 +1,4 @@
+// Models to be used in the Project.
 package models
 
 import (
@@ -8,14 +9,18 @@ import (
 	"github.com/go-yaml/yaml"
 )
 
+// Materials that are fetched from `yml` inputs.
 var LoadedMaterials Materials
 
+// Material containers
 type Materials []Material
 
 type Material struct {
-	Name        string
-	Type        string
-	Size        int
+	// Name of the material
+	Name string
+	// The size of a material. Quantity of material will be multiplied with `Size`
+	Size int
+	// Process time muliplier to be handled by workstation.
 	ProcessTime int `yaml:"process_time"`
 }
 

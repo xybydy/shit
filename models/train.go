@@ -61,19 +61,22 @@ func (t *Train) checkStock(material string) bool {
 	}
 }
 
-func (t *Train) Unload(w *Workstation) {
+func (t *Train) Unload(w *Workstation) int {
+	time := 0
 	reqs, req_am := w.GetRequirements()
 
 	for i, material := range reqs {
 		for j := 0; j < req_am[i]; j++ {
 			if t.unloadMaterial(material.Name) {
-				w.LoadMaterial(material)
+				time += w.LoadMaterial(material)
 			} else {
 				fmt.Println("Burasin sonra halledicez.")
+				return 0
 			}
 		}
 
 	}
+	return time
 }
 
 func LoadTrain() Train {

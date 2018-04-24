@@ -66,6 +66,7 @@ func getResult() {
 }
 
 func printRoute(o solver.Option) {
+	totalCost := 0
 
 	fmt.Printf("Train Specs:\n-----------------\nLocation: %d,%d\nCapacity: %d\n\n", trainModel.X, trainModel.Y, trainModel.MaxCapacity)
 
@@ -80,8 +81,8 @@ func printRoute(o solver.Option) {
 	}
 
 	for i := 0; i < len(o.Path); i++ {
+		cost := 0
 		if i == 0 {
-			//from := o.Path[i][0].(*solver.Tile).Get().(*models.Train)
 			to := o.Path[i][len(o.Path[i])-1].(*solver.Tile).Get().(*models.Workstation)
 
 			fmt.Printf("\nFrom starting point to %s\n", to.Name)
@@ -90,13 +91,12 @@ func printRoute(o solver.Option) {
 
 			fmt.Printf("\nWarehouse demands:\n%s", to.PrintRequirements())
 			fmt.Printf("Load Time: %d\n", to.LoadTime)
-			trainModel.Unload(to)
+			cost += trainModel.Unload(to)
 
 			harita.PrintMap(o.Path[i])
 
 		} else if i == len(o.Path)-1 {
 			from := o.Path[i][0].(*solver.Tile).Get().(*models.Workstation)
-			//to := o.Path[i][len(o.Path[i])-1].(*solver.Tile).Get().(*models.Train)
 
 			fmt.Printf("From %s back to storage\n", from.Name)
 
@@ -117,3 +117,6 @@ func printRoute(o solver.Option) {
 
 	}
 }
+
+// TODO sure carpanlari kullanip ne kadar vakit harcandigi artik raporlansin.
+// TODO geri donsun, hatta toplayarak donsun.

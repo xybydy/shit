@@ -2,7 +2,7 @@
   name: "WS1"
   x: 8 #x location
   y: 6 #y location
-  speed: 1
+  speed: 20
   load_time: 2
   unload_time: 3
   requirements: 
@@ -13,7 +13,7 @@
   name: "WS2"
   x: 3 #x location
   y: 4 #y location
-  speed: 1
+  speed: 20 # 100 fastest 1 slowest
   load_time: 2
   unload_time: 3
   requirements: 
@@ -24,7 +24,7 @@
   name: "WS3"
   x: 5 #x location
   y: 12 #y location
-  speed: 1
+  speed: 10
   load_time: 2
   unload_time: 3
   requirements: 
@@ -35,7 +35,7 @@
   name: "WS4"
   x: 12 #x location
   y: 10 #y location
-  speed: 1
+  speed: 10
   load_time: 2
   unload_time: 3
   requirements: 

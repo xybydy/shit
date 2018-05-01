@@ -16,12 +16,12 @@ type Workstation struct {
 	Y            int
 	Name         string
 	Status       bool `yaml:"-"`
-	Speed        int
-	LoadTime     int `yaml:"load_time"`
-	UnloadTime   int `yaml:"unload_time"`
+	Speed        float64
+	LoadTime     float64 `yaml:"load_time"`
+	UnloadTime   float64 `yaml:"unload_time"`
 	Requirements []string
 	LoadedItems  Materials `yaml:"-"`
-	ReadyItems   Materials `yaml:"-"`
+	filledTime   float64
 }
 
 func (w *Workstation) GetRequirements() ([]Material, []int) {
@@ -53,9 +53,19 @@ func (w *Workstation) PrintRequirements() string {
 	return finalString
 }
 
-func (w *Workstation) LoadMaterial(m Material) int {
+func (w *Workstation) LoadMaterial(m Material, in float64) float64 {
 	w.LoadedItems = append(w.LoadedItems, m)
+	w.filledTime = in
 	return w.LoadTime
+}
+
+func (w *Workstation) GetReadyTime() float64 {
+	var totalProcessTime float64
+	for _, l := range LoadedMaterials {
+		totalProcessTime += l.ProcessTime
+
+	}
+	return w.filledTime + totalProcessTime*(100/w.Speed)
 }
 
 func LoadWorkstations() Workstations {

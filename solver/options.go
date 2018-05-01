@@ -1,13 +1,16 @@
 package solver
 
-import "shit/pather"
+import (
+	"shit/pather"
+)
 
 type Options []*Option
 
 type Option struct {
-	Route Tiles
-	Cost  float64
-	Path  [][]pather.Pather
+	Route      Tiles
+	Cost       float64
+	Path       [][]pather.Pather
+	InnerCosts []float64
 }
 
 func (o Options) Append(op ...*Option) Options {
@@ -28,6 +31,10 @@ func (o Options) GetBestResult() *Option {
 		}
 		if option.Cost < bestOption.Cost {
 			bestOption = option
+		} else if option.Cost == bestOption.Cost {
+			if option.InnerCosts[0] < bestOption.InnerCosts[0] {
+				bestOption = option
+			}
 		}
 	}
 	return bestOption

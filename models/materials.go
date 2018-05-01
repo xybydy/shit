@@ -21,7 +21,7 @@ type Material struct {
 	// The size of a material. Quantity of material will be multiplied with `Size`
 	Size int
 	// Process time muliplier to be handled by workstation.
-	ProcessTime int `yaml:"process_time"`
+	ProcessTime float64 `yaml:"process_time"`
 }
 
 func (m Materials) Get(name string) (Material, error) {

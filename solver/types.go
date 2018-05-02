@@ -12,7 +12,7 @@ var TypeRunes = map[int]rune{
 	Road:        '.',
 	Wall:        '#',
 	Workstation: 'W',
-	Train:       'T',
+	Train:       'S',
 	FinalPath:   '●',
 }
 
@@ -20,7 +20,7 @@ var RuneType = map[rune]int{
 	'.': Road,
 	'#': Wall,
 	'W': Workstation,
-	'T': Train,
+	'S': Train,
 }
 
 var Costs = map[int]float64{

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"shit/models"
 	"shit/pather"
@@ -19,7 +20,6 @@ var trainModel models.Train
 var workstationsModels models.Workstations
 
 var usedStations models.Workstations
-var availableWorkstations models.Workstations
 var collectedWorkstations models.Workstations
 
 var globalTime float64
@@ -28,6 +28,8 @@ type cheaper struct {
 	ws   *models.Workstation
 	cost float64
 }
+
+var border = strings.Repeat("-", 45)
 
 func buildRoute(workstations solver.Tiles, startPoint *solver.Tile, returning bool) solver.Options {
 	var options solver.Options
@@ -83,7 +85,6 @@ func getResult() {
 }
 
 func printRoute(o solver.Option) {
-	fmt.Printf("Dene: %v", o.Cost)
 
 	// fmt.Printf("Train Specs:\n-----------------\nLocation: %d,%d\nCapacity: %d\n\n", trainModel.X, trainModel.Y, trainModel.MaxCapacity)
 
@@ -108,14 +109,15 @@ func DeliverStuff(o solver.Option) {
 		totalUnloadCost float64
 		totalLoadCost   float64
 	)
+	fmt.Printf("\n%s", border)
 
 	for i := 0; i < len(o.Path); i++ {
 		var (
-			pathCost   float64
-			unloadCost float64
-			loadCost   float64
+			pathCost float64
+			loadCost float64
 		)
 
+		fmt.Printf("\n%s\n", border)
 		if i == 0 {
 			to := o.Path[i][len(o.Path[i])-1].(*solver.Tile).Get().(*models.Workstation)
 
@@ -125,34 +127,45 @@ func DeliverStuff(o solver.Option) {
 			loadCost = to.LoadTime
 			totalCost := pathCost + loadCost
 
-			fmt.Printf("\nFrom starting point to %s\n", to.Name)
-			fmt.Printf("Train Stock: %s\n", trainModel.Stock.Details())
+			fmt.Printf("Delivering from warehouse point to %s\n\n", to.Name)
+			fmt.Printf("Available Stock: %s\n", trainModel.Stock.Details())
 
 			trainModel.Unload(to, globalTime+totalCost)
 
 			fmt.Printf("\nWarehouse demands:\n%s", to.PrintRequirements())
-			fmt.Printf("Load Time: %.2f\n", loadCost)
+			fmt.Printf("\nLoad Time: %.2f\n", loadCost)
 			fmt.Printf("Time to reach: %.2f\n", pathCost)
-			fmt.Printf("Total cost to deliver the product: %.2f", totalCost)
+			fmt.Printf("Total time to deliver the product: %.2f\n\n", totalCost)
 
+			fmt.Printf("The route on the map")
 			harita.PrintMap(o.Path[i])
 
 		} else if i == len(o.Path)-1 {
 			from := o.Path[i][0].(*solver.Tile).Get().(*models.Workstation)
 
+			fmt.Printf("\nALL MATERIALS ARE DELIVERED!\n", totalPathCost)
 			fmt.Printf("\nTotal delivery cost: %.2f\n", totalPathCost)
 			fmt.Printf("Total loading cost: %.2f\n", totalLoadCost)
 			fmt.Printf("Total delivery cost: %.2f\n", totalPathCost+totalLoadCost)
 
-			fmt.Printf("of %v", from.Name)
-			collectAll(from)
+			from, unloadPathCost, UnloadCost := collectAll(from)
 
-			pathCost += o.InnerCosts[i]
+			path, cost, _ := pather.Path(harita.GetTile(from.X, from.Y), train)
 
-			fmt.Printf("From %s back to storage\n", from.Name)
+			pathCost += cost
+
+			fmt.Printf("\n\n%s\n", border)
+			fmt.Printf("\nALL MATERIALS ARE COLLECTED!\n\n")
+			fmt.Printf("Total unload time: %v\n", unloadPathCost)
+			fmt.Printf("Total time to return time: %v\n", unloadPathCost+pathCost)
+			fmt.Printf("\n%s\n", border)
+
+			fmt.Printf("\nFrom %s back to storage\n\n", from.Name)
 			fmt.Printf("Time to reach: %.2f\n", pathCost)
+			harita.PrintMap(path)
 
-			harita.PrintMap(o.Path[i])
+			pathCost += unloadPathCost
+			totalUnloadCost += UnloadCost
 
 		} else {
 			from := o.Path[i][0].(*solver.Tile).Get().(*models.Workstation)
@@ -164,47 +177,49 @@ func DeliverStuff(o solver.Option) {
 			loadCost = to.LoadTime
 			totalCost := pathCost + loadCost
 
-			fmt.Printf("\nFrom %s to %s\n", from.Name, to.Name)
+			fmt.Printf("\nFrom %s to %s\n\n", from.Name, to.Name)
 			fmt.Printf("Train Stock: %s\n", trainModel.Stock.Details())
 
 			trainModel.Unload(to, globalTime+totalCost)
 
 			fmt.Printf("\nWarehouse demands:\n%s", to.PrintRequirements())
-			fmt.Printf("Load Time: %.2f\n", loadCost)
+			fmt.Printf("\nLoad Time: %.2f\n", loadCost)
 			fmt.Printf("Time to reach: %.2f\n", pathCost)
-			fmt.Printf("Total cost to deliver the product: %.2f", totalCost)
+			fmt.Printf("Total time to deliver the product: %.2f\n\n", totalCost)
 
+			fmt.Printf("The route on the map")
 			harita.PrintMap(o.Path[i])
 
 		}
 
 		totalPathCost += pathCost
 		totalLoadCost += loadCost
-		totalUnloadCost += unloadCost
-
-		globalTime += pathCost + loadCost
+		globalTime += pathCost + loadCost + totalUnloadCost
 
 	}
+	fmt.Printf("---------------------------------------\n")
+	fmt.Printf("Total simulation time: %v\n", globalTime)
 
 }
 
-func collectAll(startPoint *models.Workstation) *models.Workstation {
-	var totalPath, totalUnload float64
-	var pathCost, unLoadCost float64
+func collectAll(startPoint *models.Workstation) (*models.Workstation, float64, float64) {
 
-	fmt.Printf("\nCollection from warehouses\n")
+	var pathCost, unLoadCost, idleTime float64
+
+	fmt.Printf("\n%s\n", border)
+	fmt.Printf("%s\n", border)
+	fmt.Printf("\nCOLLECTING FROM WORKSTATIONS\n")
 
 	station := startPoint
 
 	for i := 0; i < len(usedStations); i++ {
-		checkAvailableWorkstation(station)
-		nextStation := getWorkstationAvailable(station, availableWorkstations, true)
+		nextStation := getWorkstationAvailable(station, usedStations)
 
-		pathCost, unLoadCost = collectOne(station, nextStation)
+		fmt.Printf("Test: %v", nextStation.GetReadyTime())
 
-		totalPath += pathCost
-		totalUnload += unLoadCost
-		globalTime += pathCost + unLoadCost
+		pathCost, unLoadCost, idleTime = collectOne(station, nextStation)
+
+		globalTime += pathCost + unLoadCost + idleTime
 
 		if !models.IsIn(nextStation, collectedWorkstations, false) {
 			collectedWorkstations = append(collectedWorkstations, nextStation)
@@ -212,64 +227,85 @@ func collectAll(startPoint *models.Workstation) *models.Workstation {
 
 		station = nextStation
 	}
-	return station
+
+	return station, pathCost, unLoadCost
 
 }
 
-func collectOne(from, to *models.Workstation) (float64, float64) {
+func collectOne(from, to *models.Workstation) (float64, float64, float64) {
+	var idleTime float64
 	unloadCost := to.UnloadTime
 	path, pathCost, _ := pather.Path(harita.GetTile(from.X, from.Y), harita.GetTile(to.X, to.Y))
 
+	if to.GetReadyTime() < globalTime+pathCost {
+		idleTime = 0.0
+	} else {
+		idleTime = to.GetReadyTime() - globalTime - pathCost
+	}
+
 	fmt.Printf("\nCollecting from %s to %s\n", from.Name, to.Name)
+	fmt.Printf("\nWorkstation %s will be ready at: %.2f\n", to.Name, to.GetReadyTime())
+	fmt.Printf("\nTrain idle time %.2f\n", idleTime)
 	fmt.Printf("Time to reach: %.2f\n", pathCost)
 	fmt.Printf("Workstation Unload Time: %.2f\n", unloadCost)
-	fmt.Printf("Total time spent: %.2f\n", unloadCost+pathCost)
+	fmt.Printf("Total time spent: %.2f\n", unloadCost+pathCost+idleTime)
 	harita.PrintMap(path)
 
-	return pathCost, unloadCost
+	return pathCost, unloadCost, idleTime
 
 }
 
-func checkAvailableWorkstation(startPoint *models.Workstation) {
-	for _, workstation := range usedStations {
-		if workstation.GetReadyTime() <= globalTime && !models.IsIn(workstation, availableWorkstations, false) && !models.IsIn(workstation, collectedWorkstations, false) {
-			availableWorkstations = append(availableWorkstations, workstation)
+func getWorkstationAvailable(startPoint *models.Workstation, workstations models.Workstations) *models.Workstation {
+	var cheap cheaper
+	var topPriorityWS []cheaper
+	var lowPriorityWS []cheaper
+
+	for _, workstation := range workstations {
+		if !models.IsIn(workstation, collectedWorkstations, false) {
+			_, pathCost, _ := pather.Path(harita.GetTile(startPoint.X, startPoint.Y), harita.GetTile(workstation.X, workstation.Y))
+			cost := pathCost + workstation.GetReadyTime() + globalTime
+			topPriorityWS = append(topPriorityWS, cheaper{workstation, cost})
 		}
 	}
 
-	if len(availableWorkstations) <= len(collectedWorkstations) {
-		availableWorkstations = append(availableWorkstations, getWorkstationAvailable(startPoint, usedStations, false))
-
-	}
-
-}
-
-func getWorkstationAvailable(startPoint *models.Workstation, workstations models.Workstations, available bool) *models.Workstation {
-	var cheap cheaper
-
 	for _, workstation := range workstations {
-		if !models.IsIn(workstation, availableWorkstations, available) {
+		if !models.IsIn(workstation, collectedWorkstations, false) {
 			_, pathCost, _ := pather.Path(harita.GetTile(startPoint.X, startPoint.Y), harita.GetTile(workstation.X, workstation.Y))
 			cost := pathCost + workstation.GetReadyTime() + globalTime
 
-			fmt.Printf("qqqq %v - %v", workstation.Name, available)
-
-			if cheap.ws == nil {
-				cheap = cheaper{ws: workstation, cost: cost}
-				fmt.Printf("getwork: %v - %v - %v - %v\n", workstation.Name, workstation.GetReadyTime(), workstation.UnloadTime, cost)
-
+			if workstation.GetReadyTime() < globalTime {
+				topPriorityWS = append(topPriorityWS, cheaper{workstation, cost})
 			} else {
-				fmt.Printf("getwork2: %v - %v - %v - %v\n", workstation.Name, workstation.GetReadyTime(), workstation.UnloadTime, cost)
-				if cost < cheap.cost {
-					cheap = cheaper{ws: workstation, cost: cost}
-				}
-
+				lowPriorityWS = append(lowPriorityWS, cheaper{workstation, cost})
 			}
 
-		} else {
-			fmt.Printf("var %v\n", workstation.Name)
 		}
 	}
+
+	if len(topPriorityWS) != 0 {
+		for _, workstation := range topPriorityWS {
+
+			if cheap.ws == nil {
+				cheap = workstation
+			} else {
+				if workstation.cost < cheap.cost {
+					cheap = workstation
+				}
+			}
+		}
+
+	} else {
+		for _, workstation := range lowPriorityWS {
+			if cheap.ws == nil {
+				cheap = workstation
+			} else {
+				if workstation.cost < cheap.cost {
+					cheap = workstation
+				}
+			}
+		}
+	}
+
 	return cheap.ws
 }
 

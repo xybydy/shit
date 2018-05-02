@@ -35,6 +35,10 @@ type Workstation struct {
 	filledTime float64
 }
 
+func (w *Workstations) PopClosestWorkstation() {
+
+}
+
 // Returns the list of of materials and required amounts of those as a slice.
 func (w *Workstation) GetRequirements() ([]Material, []int) {
 	materials := make([]Material, 0)

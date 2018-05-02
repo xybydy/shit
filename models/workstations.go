@@ -9,21 +9,33 @@ import (
 	"github.com/go-yaml/yaml"
 )
 
+// Workstations that are fetched from `yml` inputs.
 type Workstations []*Workstation
 
 type Workstation struct {
-	X            int
-	Y            int
-	Name         string
-	Status       bool `yaml:"-"`
-	Speed        float64
-	LoadTime     float64 `yaml:"load_time"`
-	UnloadTime   float64 `yaml:"unload_time"`
+	// X coordination of ´Workstation´
+	X int
+	// Y coordination of ´Workstation´
+	Y int
+	// Unique name of ´Workstation´
+	Name string
+	// Processing speed of workstation. Higher speed is faster processing time.
+	Speed float64
+	// Loading time of all demanded materials. Higher LoadTime causes
+	// longer time to load materials.
+	LoadTime float64 `yaml:"load_time"`
+	// Unloading time of all demanded materials. Higher UnloadTime causes
+	// longer time to unload materials.
+	UnloadTime float64 `yaml:"unload_time"`
+	// Slice of requirements in raw string type.
 	Requirements []string
-	LoadedItems  Materials `yaml:"-"`
-	filledTime   float64
+	// LoadedItems is the list of materials which are loaded into Workstation from the Train.
+	LoadedItems Materials `yaml:"-"`
+	// The time of when the Train has loaded the materials into workstation
+	filledTime float64
 }
 
+// Returns the list of of materials and required amounts of those as a slice.
 func (w *Workstation) GetRequirements() ([]Material, []int) {
 	materials := make([]Material, 0)
 	amounts := make([]int, 0)
@@ -38,10 +50,10 @@ func (w *Workstation) GetRequirements() ([]Material, []int) {
 		amount, _ := strconv.Atoi(s[1])
 		amounts = append(amounts, amount)
 	}
-
 	return materials, amounts
 }
 
+// Returns the string of required items with amounts as a string
 func (w *Workstation) PrintRequirements() string {
 	var finalString string
 	reqs, amts := w.GetRequirements()
@@ -53,12 +65,14 @@ func (w *Workstation) PrintRequirements() string {
 	return finalString
 }
 
+// Loads given material into workstation and updates filledTime accordingly.
 func (w *Workstation) LoadMaterial(m Material, in float64) float64 {
 	w.LoadedItems = append(w.LoadedItems, m)
 	w.filledTime = in
 	return w.LoadTime
 }
 
+// Returns the time of when Workstation can unload the processed materials.
 func (w *Workstation) GetReadyTime() float64 {
 	var totalProcessTime float64
 	for _, l := range LoadedMaterials {
@@ -68,6 +82,8 @@ func (w *Workstation) GetReadyTime() float64 {
 	return w.filledTime + totalProcessTime*(100/w.Speed)
 }
 
+// Initilization function of ´Workstations´.
+// Reads input file and creats ´Workstations´ object with full of ´Workstation´ objects.
 func LoadWorkstations() Workstations {
 	var workstations Workstations
 
@@ -84,6 +100,7 @@ func LoadWorkstations() Workstations {
 	return workstations
 }
 
+// Returns the workstation object of given coordinations.
 func GetWorkstation(x, y int, w Workstations) *Workstation {
 	for _, station := range w {
 		if station.X == x && station.Y == y {

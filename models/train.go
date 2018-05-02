@@ -9,16 +9,30 @@ import (
 	"github.com/go-yaml/yaml"
 )
 
+// Type of train with exact the same type as yml file.
+// Although it is named as "Train", this object also acts as warehouse at the beginning of the simulation.
+// So the location of the train will also be startpoint and the endpoint of simulation.
 type Train struct {
-	X               int
-	Y               int
-	Name            string
-	MaxCapacity     int `yaml:"capacity"`
-	Speed           float64
-	Stock           Inventories
+	// X coordination of ´Train´
+	X int
+	// X coordination of ´Train´
+	Y int
+	// Unique name of ´Train´
+	Name string
+	// The maximum capacity that Train can contain at once.
+	// Please note that the capacity contains materials with size and quantities multiplied.
+	// But for now to prevent unexpected behaviour it is recommended for users to give the Train higher capacity than Workstations demands
+	MaxCapacity int `yaml:"capacity"`
+	// The transportation speed of ´Train´
+	Speed float64
+	// All materials are brought from warehouse added in ´Stock´
+	Stock Inventories
+	// CurrentCapacity used for to check if any available space is left in Train Stock.
 	CurrentCapacity int
 }
 
+// This method goes through each workstations, collects all demands of workstations
+// and add the materials to Train Stock.
 func (t *Train) LoadFromStorage(w Workstations) {
 	for _, station := range w {
 		reqs, reqAmount := station.GetRequirements()
@@ -61,6 +75,7 @@ func (t *Train) checkStock(material string) bool {
 	}
 }
 
+// Unloads the material from train to workstation.
 func (t *Train) Unload(w *Workstation, start float64) float64 {
 	time := 0.0
 	reqs, req_am := w.GetRequirements()
@@ -74,11 +89,12 @@ func (t *Train) Unload(w *Workstation, start float64) float64 {
 				return 0.0
 			}
 		}
-
 	}
 	return time
 }
 
+// Initilization function of ´Train´.
+// Reads input file and creates ´Train´ object.
 func LoadTrain() Train {
 	var train Train
 
@@ -94,6 +110,7 @@ func LoadTrain() Train {
 	return train
 }
 
+// TODO Bunu kaldıralım, LoadTrain pointer dönerse bununla aynı işi yapar bence.
 func GetTrain(x, y int, t Train) *Train {
 	if t.X == x && t.Y == y {
 		return &t

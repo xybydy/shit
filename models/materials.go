@@ -1,4 +1,3 @@
-// Models to be used in the Project.
 package models
 
 import (
@@ -12,18 +11,21 @@ import (
 // Materials that are fetched from `yml` inputs.
 var LoadedMaterials Materials
 
-// Material containers
+// Slice of ´Material´ type.
 type Materials []Material
 
+// Type of material with exact the same type as yml file.
 type Material struct {
 	// Name of the material
 	Name string
-	// The size of a material. Quantity of material will be multiplied with `Size`
+	// The size of a material. Quantity of material is being multiplied with `Size`
 	Size int
 	// Process time muliplier to be handled by workstation.
 	ProcessTime float64 `yaml:"process_time"`
 }
 
+// ´Get´ method brings ´Material´ of name parameter given
+// and raises error if there is no such material requested.
 func (m Materials) Get(name string) (Material, error) {
 	for i := 0; i < len(m); i++ {
 		if m[i].Name == name {
@@ -33,6 +35,7 @@ func (m Materials) Get(name string) (Material, error) {
 	return Material{}, errors.New(fmt.Sprintf("There is no such material specs: %s", name))
 }
 
+// TODO TO BE DELETED or make it pointer method.
 func (m Materials) Pop(name string) (Material, error) {
 	for i := 0; i < len(m); i++ {
 		if m[i].Name == name {
@@ -46,8 +49,9 @@ func (m Materials) Pop(name string) (Material, error) {
 	return Material{}, errors.New(fmt.Sprintf("There is no available item: %s", name))
 }
 
+// Initilization function of ´Materials´.
+// Reads input file and creats ´Materials´ object with full of ´Material´ objects.
 func LoadMaterials() {
-
 	f, err := ioutil.ReadFile("inputs/materials.yml")
 	if err != nil {
 		fmt.Print(err)
@@ -57,5 +61,4 @@ func LoadMaterials() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 }

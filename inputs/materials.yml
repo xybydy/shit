@@ -1,3 +1,18 @@
+# Materials are one of the main components in the project.  
+# User will enter the materials and its specificiations in this file.
+#
+# Specs are:
+#   name: Unique identifier of the material.
+#   size: The size of the material will be multiplied with the quantity when 
+#         it's been loading into train and workstations.
+#   process_time: Processing time is to be using in workstations. 
+#                 For the formulation of process time of a material please
+#                 refer to´workstation´ input file.
+#
+
+
+
+
 - m1:
   name: "M1"
   size: 1

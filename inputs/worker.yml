@@ -1,7 +1,27 @@
+# Train delivers and collects from/to workstations. On our simulation warehouses
+# and workstation are assumed that the materials will deliver the exact please of 
+# those instead of parking next to stations or warehouses.
+#
+# Specs are:
+#   name: Unique identifier of the material.
+#   x,y: Coordinate of workstations, please note that all location figures should match
+#        with the map. If location values and the train's location on the map differs,
+#        the simulation will raise an error and shutdown. Also please note that
+#        the map starts at (0,0) location.
+#   speed: The speed of the train. It is advised to use the numbers between 1 - 100
+#          to get proper behaviour of train. Higher the number is faster the process time.
+#   load_time: Loading time of all demanded materials. Higher load_time causes
+#              longer time to load materials.
+#   unload_time:  Unloading time of all demanded materials. Higher unload_time causes
+#                 longer time to unload materials.
+#   requirements: Required materials of the workstation as a list of 
+#                 material name and required amount.
+#                 Please enter the in following format (materialName,requestAmount)
+
 - ws1:
   name: "WS1"
-  x: 8 #x location
-  y: 6 #y location
+  x: 8 
+  y: 6
   speed: 20
   load_time: 2
   unload_time: 3
@@ -11,9 +31,9 @@
 
 - ws2:
   name: "WS2"
-  x: 3 #x location
-  y: 4 #y location
-  speed: 20 # 100 fastest 1 slowest
+  x: 3
+  y: 4 
+  speed: 20 
   load_time: 2
   unload_time: 3
   requirements: 

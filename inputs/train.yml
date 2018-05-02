@@ -1,6 +1,19 @@
+# Train also regarded as startpoint of the project. 
+# So we can also think of train as a warehouse 
+
+# Specs are:
+#   name: Unique identifier of the material.
+#   capacity: The capacity of the train. 
+#             The ´size´ of materials multiplies with quantity 
+#   speed: The speed of the train. It is advised to use the numbers between 1 - 100
+#          to get proper behaviour of train. 
+#   x,y: Coordinate of the train, please note that all location figures should match
+#        with the map. If location values and the train's location on the map differs,
+#        the simulation will raise an error and shutdown. Also please note that
+#        the map starts at (0,0) location.
+
 name: "T1"
 capacity: 500
 speed: 1
 x: 1
-y:  1
-
+y: 1

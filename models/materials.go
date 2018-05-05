@@ -3,6 +3,8 @@ package models
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"github.com/go-yaml/yaml"
 )
@@ -36,8 +38,20 @@ func (m Materials) Get(name string) (Material, error) {
 
 // Initilization function of ´Materials´.
 // Reads input file and creats ´Materials´ object with full of ´Material´ objects.
-func LoadMaterials() {
-	f, err := ioutil.ReadFile("inputs/materials.yml")
+func LoadMaterials(input ...string) {
+	var in string
+
+	dir, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
+	}
+	if len(input) == 0 {
+		in = filepath.Join(dir, "inputs/materials.yml")
+	} else if len(input) == 1 {
+		in = input[0]
+	}
+
+	f, err := ioutil.ReadFile(in)
 	if err != nil {
 		fmt.Print(err)
 	}

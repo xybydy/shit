@@ -7,6 +7,8 @@ package models
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"shit/utils"
 
@@ -101,10 +103,21 @@ func (t *Train) Unload(w *Workstation, start float64) float64 {
 
 // Initilization function of ´Train´.
 // Reads input file and creates ´Train´ object.
-func LoadTrain() Train {
+func LoadTrain(input ...string) Train {
+	var in string
+	dir, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
+	}
+	if len(input) == 0 {
+		in = filepath.Join(dir, "inputs/train.yml")
+	} else if len(input) == 1 {
+		in = input[0]
+	}
+
 	var train Train
 
-	f, err := ioutil.ReadFile("inputs/train.yml")
+	f, err := ioutil.ReadFile(in)
 	if err != nil {
 		fmt.Print(err)
 	}

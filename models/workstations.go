@@ -3,6 +3,8 @@ package models
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -84,10 +86,22 @@ func (w *Workstation) GetReadyTime() float64 {
 
 // Initilization function of ´Workstations´.
 // Reads input file and creats ´Workstations´ object with full of ´Workstation´ objects.
-func LoadWorkstations() Workstations {
+func LoadWorkstations(input ...string) Workstations {
+	var in string
+
+	dir, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
+	}
+	if len(input) == 0 {
+		in = filepath.Join(dir, "inputs/worker.yml")
+	} else if len(input) == 1 {
+		in = input[0]
+	}
+
 	var workstations Workstations
 
-	f, err := ioutil.ReadFile("inputs/worker.yml")
+	f, err := ioutil.ReadFile(in)
 	if err != nil {
 		fmt.Print(err)
 	}

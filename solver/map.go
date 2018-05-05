@@ -3,7 +3,6 @@ package solver
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"shit/models"
 	"shit/pather"
@@ -53,21 +52,6 @@ func (m Map) GetKind(kind int) Tiles {
 		}
 	}
 	return kinds
-}
-
-func ParseMap(input string) Map {
-	m := Map{}
-	for x, row := range strings.Split(strings.TrimSpace(input), "\n") {
-		for y, raw := range row {
-			kind, ok := RuneType[raw]
-			if !ok {
-				kind = Wall
-			}
-
-			m.SetTile(&Tile{Kind: kind}, x, y)
-		}
-	}
-	return m
 }
 
 func (m Map) CrossCheck() bool {
@@ -126,6 +110,24 @@ func (m Map) renderMap(path []pather.Pather) string {
 func (m Map) PrintMap(path []pather.Pather) {
 
 	fmt.Printf("\n%s\r", m.renderMap(path))
-	time.Sleep(100 * time.Millisecond)
 
+}
+
+func (m Map) GetSize() (row, col int) {
+	return len(m), len(m[0])
+}
+
+func ParseMap(input string) Map {
+	m := Map{}
+	for x, row := range strings.Split(strings.TrimSpace(input), "\n") {
+		for y, raw := range row {
+			kind, ok := RuneType[raw]
+			if !ok {
+				kind = Wall
+			}
+
+			m.SetTile(&Tile{Kind: kind}, x, y)
+		}
+	}
+	return m
 }

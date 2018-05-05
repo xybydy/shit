@@ -18,12 +18,10 @@ func GetPermutation(tiles Tiles) []Tiles {
 	var routes []Tiles
 
 	p := permutation.New(tiles)
-	for p.Scan() {
+	for ok := true; ok; ok = p.Next() {
 		q := make(Tiles, len(tiles))
 		copy(q, tiles)
 		routes = append(routes, q)
 	}
-
 	return routes
-
 }

@@ -1,9 +1,11 @@
 /*
-Simply what the simulation does is;
 We prepare our map in `plant.map` file, then go to inputs folder to define our models such as workstation, train and materials.
-Then we run our program,
-
-
+Then program loads `plant.map` and the model files first.
+Afterwards the simulation does is checking coordinations in given model files if they're in-line with the map.
+If they are not in-line, simulation stops running.
+After checking the models, simulation finds all possible ways from warehouse stops at through all workstations
+and then back to warehouse again with calculating the cost of the route. Amongst the all routes the program picks the shortest route,
+Then bring all the output into "output.txt" file.
 */
 package main
 

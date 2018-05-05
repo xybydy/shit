@@ -64,7 +64,7 @@ func (m Map) CrossCheck() bool {
 				stations := models.LoadWorkstations()
 				r := models.GetWorkstation(col.X, col.Y, stations)
 				if r == nil {
-					fmt.Println(col.X, col.Y, " does not match")
+					fmt.Println("Workstation at", col.X, col.Y, " does not match with any model")
 					return false
 				}
 			} else if col.Kind == Train {

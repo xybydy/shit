@@ -1,3 +1,10 @@
+/*
+Simply what the simulation does is;
+We prepare our map in `plant.map` file, then go to inputs folder to define our models such as workstation, train and materials.
+Then we run our program,
+
+
+*/
 package main
 
 import (
@@ -66,18 +73,11 @@ func buildRoute(workstations solver.Tiles, startPoint *solver.Tile) solver.Optio
 }
 
 func main() {
-	f, err := os.Create("output.txt")
-	if err != nil {
-		fmt.Errorf("couldn't create the file")
-	}
-	defer f.Close()
-
-	fileWriter = io.MultiWriter(os.Stdout, f)
-
 	models.LoadMaterials()
 	workstationsModels = models.LoadWorkstations()
 	trainModel = models.LoadTrain()
 	trainModel.LoadFromStorage(workstationsModels)
+
 	getResult()
 
 }
@@ -89,7 +89,21 @@ func getResult() {
 	workstations = harita.GetKind(solver.Workstation)
 	options = buildRoute(workstations, train)
 
+	if !harita.CrossCheck() {
+		fmt.Println("Please check all locations in models and the map. Locations are not in-line")
+		fmt.Println("Simulation stops.")
+		os.Exit(1)
+	}
+
 	bestOption = options.GetBestResult()
+
+	f, err := os.Create("output.txt")
+	if err != nil {
+		fmt.Errorf("couldn't create the file")
+	}
+	defer f.Close()
+
+	fileWriter = io.MultiWriter(os.Stdout, f)
 
 	printRoute(*bestOption)
 

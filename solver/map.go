@@ -3,21 +3,15 @@ package solver
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"shit/models"
 	"shit/pather"
 )
 
+// `Map` object is basically a 2-dimensional matrix of `Tile` objects
 type Map map[int]map[int]*Tile
 
-func (m Map) Tile(x, y int) *Tile {
-	if m[x] == nil {
-		return nil
-	}
-	return m[x][y]
-}
-
+// Inserts `Tile` object into map of given coordinations
 func (m Map) SetTile(t *Tile, x, y int) {
 	if m[x] == nil {
 		m[x] = map[int]*Tile{}
@@ -28,10 +22,15 @@ func (m Map) SetTile(t *Tile, x, y int) {
 	t.W = m
 }
 
+// Returns `Tile` object of given coordinations.
 func (m Map) GetTile(x, y int) *Tile {
+	if m[x] == nil {
+		return nil
+	}
 	return m[x][y]
 }
 
+// Returns the first occurrence of the given `Tile` type.
 func (m Map) FirstOfKind(kind int) *Tile {
 	for _, row := range m {
 		for _, t := range row {
@@ -43,6 +42,7 @@ func (m Map) FirstOfKind(kind int) *Tile {
 	return nil
 }
 
+// Acts like `FirstOfKind` method however this method returns all objects of given type of `Tile`
 func (m Map) GetKind(kind int) Tiles {
 	var kinds Tiles
 	for _, row := range m {
@@ -55,21 +55,8 @@ func (m Map) GetKind(kind int) Tiles {
 	return kinds
 }
 
-func ParseMap(input string) Map {
-	m := Map{}
-	for x, row := range strings.Split(strings.TrimSpace(input), "\n") {
-		for y, raw := range row {
-			kind, ok := RuneType[raw]
-			if !ok {
-				kind = Wall
-			}
-
-			m.SetTile(&Tile{Kind: kind}, x, y)
-		}
-	}
-	return m
-}
-
+// Crosschecks all tiles and model coordinations and if one of the type does not match return `false` and
+// simulation stops running.
 func (m Map) CrossCheck() bool {
 	for _, row := range m {
 		for _, col := range row {
@@ -77,7 +64,7 @@ func (m Map) CrossCheck() bool {
 				stations := models.LoadWorkstations()
 				r := models.GetWorkstation(col.X, col.Y, stations)
 				if r == nil {
-					fmt.Println(col.X, col.Y, " does not match")
+					fmt.Println("Workstation at", col.X, col.Y, " does not match with any model")
 					return false
 				}
 			} else if col.Kind == Train {
@@ -94,6 +81,7 @@ func (m Map) CrossCheck() bool {
 	return true
 }
 
+// Renders the map and the path.
 func (m Map) renderMap(path []pather.Pather) string {
 	width := len(m)
 	if width == 0 {
@@ -110,7 +98,7 @@ func (m Map) renderMap(path []pather.Pather) string {
 	rows := make([]string, height)
 	for x := 0; x < width; x++ {
 		for y := 0; y < height; y++ {
-			t := m.Tile(x, y)
+			t := m.GetTile(x, y)
 			r := ' '
 			if pathLocs[fmt.Sprintf("%d,%d", x, y)] {
 				r = TypeRunes[FinalPath]
@@ -123,9 +111,30 @@ func (m Map) renderMap(path []pather.Pather) string {
 	return strings.Join(rows, "\n")
 }
 
+// Renders the map.
 func (m Map) PrintMap(path []pather.Pather) {
 
 	fmt.Printf("\n%s\r", m.renderMap(path))
-	time.Sleep(100 * time.Millisecond)
 
+}
+
+// Returns the x,y dimension of the `Map`.
+func (m Map) GetSize() (row, col int) {
+	return len(m), len(m[0])
+}
+
+// Goes through the given `string` input and builds Map with full of `Tiles`
+func ParseMap(input string) Map {
+	m := Map{}
+	for x, row := range strings.Split(strings.TrimSpace(input), "\n") {
+		for y, raw := range row {
+			kind, ok := RuneType[raw]
+			if !ok {
+				kind = Wall
+			}
+
+			m.SetTile(&Tile{Kind: kind}, x, y)
+		}
+	}
+	return m
 }

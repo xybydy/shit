@@ -1,3 +1,6 @@
+/*
+This package has miscellaneous functions used within the project
+*/
 package utils
 
 import (
@@ -5,6 +8,7 @@ import (
 	"io/ioutil"
 )
 
+// Read `plant.map` file and return it as a string.
 func GetMaze(filename ...string) string {
 	var file string
 
@@ -23,6 +27,7 @@ func GetMaze(filename ...string) string {
 
 }
 
+// Returns quotient and remainder of divison.
 func DivMod(numerator, denominator int) (quotient, remainder int) {
 	quotient = numerator / denominator // integer division, decimals are truncated
 	remainder = numerator % denominator

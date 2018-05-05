@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 
@@ -32,21 +31,7 @@ func (m Materials) Get(name string) (Material, error) {
 			return m[i], nil
 		}
 	}
-	return Material{}, errors.New(fmt.Sprintf("There is no such material specs: %s", name))
-}
-
-// TODO TO BE DELETED or make it pointer method.
-func (m Materials) Pop(name string) (Material, error) {
-	for i := 0; i < len(m); i++ {
-		if m[i].Name == name {
-			item := m[i]
-			copy(m[i:], m[i+1:])
-			m[len(m)-1] = Material{}
-			m = m[:len(m)-1]
-			return item, nil
-		}
-	}
-	return Material{}, errors.New(fmt.Sprintf("There is no available item: %s", name))
+	return Material{}, fmt.Errorf("There is no such material specs: %s", name)
 }
 
 // Initilization function of ´Materials´.

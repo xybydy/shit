@@ -12,10 +12,8 @@ func IsIn(a *Workstation, list Workstations, reverse bool) bool {
 			return true
 		}
 	}
-
 	if reverse {
 		return true
 	}
-
 	return false
 }

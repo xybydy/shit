@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -26,9 +25,9 @@ func (m Inventories) Add(material Material, amount int) Inventories {
 	if !err {
 		item.Amount += amount
 		return m
-	} else {
-		return append(m, &Inventory{material, amount})
 	}
+	return append(m, &Inventory{material, amount})
+
 }
 
 func (m Inventories) getStock(material Material) (*Inventory, bool) {
@@ -46,15 +45,14 @@ func (m Inventories) Pop(name string) (Material, error) {
 	for i := 0; i < len(m); i++ {
 		if m[i].Material.Name == name {
 			if m[i].Amount <= 0 {
-				return Material{}, errors.New(fmt.Sprintf("There is no available item: %s", name))
-			} else {
-				m[i].Amount -= m[i].Material.Size
-				return m[i].Material, nil
+				return Material{}, fmt.Errorf("There is no available item: %s", name)
 			}
+			m[i].Amount -= m[i].Material.Size
+			return m[i].Material, nil
 
 		}
 	}
-	return Material{}, errors.New(fmt.Sprintf("There is no available item: %s", name))
+	return Material{}, fmt.Errorf("There is no available item: %s", name)
 }
 
 // ´Get´ method returns the Material of given name but unlike ´Pop´ method,

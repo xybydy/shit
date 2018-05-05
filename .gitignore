@@ -1,4 +1,3 @@
-
 *.exe~
 *.dll
 *.so
@@ -7,3 +6,5 @@
 *.out
 /test
 /.idea
+output.txt
+.DS_Store

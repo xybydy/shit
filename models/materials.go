@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 
@@ -32,7 +31,7 @@ func (m Materials) Get(name string) (Material, error) {
 			return m[i], nil
 		}
 	}
-	return Material{}, errors.New(fmt.Sprintf("There is no such material specs: %s", name))
+	return Material{}, fmt.Errorf("There is no such material specs: %s", name)
 }
 
 // Initilization function of ´Materials´.

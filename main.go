@@ -59,7 +59,7 @@ func buildRoute(workstations solver.Tiles, startPoint *solver.Tile) solver.Optio
 				innerCosts = append(innerCosts, cost)
 			}
 		}
-		options = options.Append(&solver.Option{route, totalCost, paths, innerCosts})
+		options = options.Append(&solver.Option{Route: route, Cost: totalCost, Path: paths, InnerCosts: innerCosts})
 
 	}
 	return options
@@ -68,7 +68,7 @@ func buildRoute(workstations solver.Tiles, startPoint *solver.Tile) solver.Optio
 func main() {
 	f, err := os.Create("output.txt")
 	if err != nil {
-		fmt.Errorf("Couldn't create the file.")
+		fmt.Errorf("couldn't create the file")
 	}
 	defer f.Close()
 

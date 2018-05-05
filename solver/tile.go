@@ -64,18 +64,17 @@ func (t *Tile) Get() interface{} {
 		if r == nil {
 			fmt.Println("Train does not match")
 			return nil
-		} else {
-			return r
 		}
+		return r
+
 	} else if t.Kind == Workstation {
 		stations := models.LoadWorkstations()
 		r := models.GetWorkstation(t.X, t.Y, stations)
 		if r == nil {
 			fmt.Println(t.X, t.Y, " does not match")
 			return nil
-		} else {
-			return r
 		}
+		return r
 
 	}
 	return nil

@@ -66,10 +66,9 @@ func (t *Train) unloadMaterial(materialName string) bool {
 		t.CurrentCapacity -= q.Size
 		return true
 
-	} else {
-		fmt.Printf("There's no %s\n", materialName)
-		return false
 	}
+	fmt.Printf("There's no %s\n", materialName)
+	return false
 
 }
 
@@ -77,24 +76,24 @@ func (t *Train) unloadMaterial(materialName string) bool {
 func (t *Train) checkStock(material string) bool {
 	if t.Stock.Get(material) == (Material{}) {
 		return false
-	} else {
-		return true
 	}
+	return true
+
 }
 
 // Unloads the material from train to workstation.
 func (t *Train) Unload(w *Workstation, start float64) float64 {
 	time := 0.0
-	reqs, req_am := w.GetRequirements()
+	reqs, requestAmount := w.GetRequirements()
 
 	for i, material := range reqs {
-		for j := 0; j < req_am[i]; j++ {
+		for j := 0; j < requestAmount[i]; j++ {
 			if t.unloadMaterial(material.Name) {
 				time += w.LoadMaterial(material, start)
-			} else {
-				fmt.Println("Burasin sonra halledicez.")
-				return 0.0
 			}
+			fmt.Println("Burasin sonra halledicez.")
+			return 0.0
+
 		}
 	}
 	return time

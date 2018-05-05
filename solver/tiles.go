@@ -2,6 +2,18 @@ package solver
 
 import "github.com/gitchander/permutation"
 
+// Tiles object contain list of Tile objects
+type Tiles []*Tile
+
+// Returns the number of how many Tile object that Tiles object contations
+func (t Tiles) Len() int {
+	return len(t)
+}
+
+func (t Tiles) Swap(i, j int) { t[i], t[j] = t[j], t[i] }
+
+// Returns the permuation results of Tiles object to check the all possible route and
+// calculate the cost
 func GetPermutation(tiles Tiles) []Tiles {
 	var routes []Tiles
 
@@ -15,11 +27,3 @@ func GetPermutation(tiles Tiles) []Tiles {
 	return routes
 
 }
-
-type Tiles []*Tile
-
-func (t Tiles) Len() int {
-	return len(t)
-}
-
-func (t Tiles) Swap(i, j int) { t[i], t[j] = t[j], t[i] }

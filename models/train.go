@@ -1,3 +1,7 @@
+/*
+Models package contains all objects and methods of objects used in the simulation.
+The objects are `Material`, `Stock`, `Workstation`, `Train`.
+*/
 package models
 
 import (
@@ -51,6 +55,8 @@ func (t *Train) LoadFromStorage(w Workstations) {
 	}
 }
 
+// Checks whether the given material exists. If the material exists
+// the material unload from `Train` and opens space.
 func (t *Train) unloadMaterial(materialName string) bool {
 	if t.checkStock(materialName) {
 		q, err := t.Stock.Pop(materialName)
@@ -67,6 +73,7 @@ func (t *Train) unloadMaterial(materialName string) bool {
 
 }
 
+// Returns `true` if `Train` has the given material name, returns `false` otherwise.
 func (t *Train) checkStock(material string) bool {
 	if t.Stock.Get(material) == (Material{}) {
 		return false
@@ -110,7 +117,8 @@ func LoadTrain() Train {
 	return train
 }
 
-// TODO Bunu kaldıralım, LoadTrain pointer dönerse bununla aynı işi yapar bence.
+// Returns `Train` object if given coordinates matches with `Train` object given. Return `nil` if coordinates does not match with the object.
+// This function used to cross check `Tile` object and `Train` object.
 func GetTrain(x, y int, t Train) *Train {
 	if t.X == x && t.Y == y {
 		return &t

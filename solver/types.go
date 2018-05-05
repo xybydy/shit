@@ -8,6 +8,13 @@ const (
 	FinalPath
 )
 
+// Tile representation as a char in the map.
+//
+// Available road represented with `.`
+// Each wall represented with `#`
+// `W` character represents Workstation objects
+// Train / Storage represented with `S`
+// Selected path in optimum path represented with `●`
 var TypeRunes = map[int]rune{
 	Road:        '.',
 	Wall:        '#',

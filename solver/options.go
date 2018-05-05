@@ -4,15 +4,22 @@ import (
 	"shit/pather"
 )
 
+// The list of `Option` objects
 type Options []*Option
 
+// Each `Option` object holds whole the route options throughout the all workstations.
 type Option struct {
-	Route      Tiles
-	Cost       float64
-	Path       [][]pather.Pather
+	// The `Tiles` that the `Train` object went through the route
+	Route Tiles
+	// Number of `Tiles` that `Train` object went through, each `Tile` costs 1 unit time.
+	Cost float64
+	// Sub-path in the `Route` from each point to next point
+	Path [][]pather.Pather
+	// The costs of inner paths
 	InnerCosts []float64
 }
 
+// Add `Option` object to `Options` list
 func (o Options) Append(op ...*Option) Options {
 	for _, k := range op {
 		if k.Cost != 0 {
@@ -22,6 +29,7 @@ func (o Options) Append(op ...*Option) Options {
 	return o
 }
 
+// Returns the Option with lowest cost - faster - route.
 func (o Options) GetBestResult() *Option {
 	var bestOption = &Option{}
 

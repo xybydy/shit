@@ -1,10 +1,9 @@
+// astar is an A* pathfinding implementation.
 package pather
 
 import (
 	"container/heap"
 )
-
-// astar is an A* pathfinding implementation.
 
 // Pather is an interface which allows A* searching on arbitrary objects which
 // can represent a weighted graph.

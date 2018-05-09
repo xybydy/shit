@@ -6,14 +6,20 @@ package utils
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 )
 
 // Read `plant.map` file and return it as a string.
 func GetMaze(filename ...string) string {
 	var file string
 
+	dir, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
+	}
 	if len(filename) == 0 {
-		file = "plant.map"
+		file = filepath.Join(dir, "inputs/plant.map")
 	} else if len(filename) == 1 {
 		file = filename[0]
 	}

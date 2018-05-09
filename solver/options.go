@@ -1,7 +1,7 @@
 package solver
 
 import (
-	"shit/pather"
+	"semesterproject/pather"
 )
 
 // The list of `Option` objects

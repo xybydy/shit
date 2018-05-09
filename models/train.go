@@ -10,7 +10,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"shit/utils"
+	"semesterproject/utils"
 
 	"github.com/go-yaml/yaml"
 )

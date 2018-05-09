@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"shit/models"
-	"shit/pather"
+	"semesterproject/models"
+	"semesterproject/pather"
 )
 
 // `Map` object is basically a 2-dimensional matrix of `Tile` objects

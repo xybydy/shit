@@ -15,10 +15,10 @@ import (
 	"os"
 	"strings"
 
-	"shit/models"
-	"shit/pather"
-	"shit/solver"
-	"shit/utils"
+	"semesterproject/models"
+	"semesterproject/pather"
+	"semesterproject/solver"
+	"semesterproject/utils"
 )
 
 var harita solver.Map

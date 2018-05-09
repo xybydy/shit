@@ -1,3 +1,7 @@
+/*
+Objects and methods for pathfinding algorithm
+*/
+
 package solver
 
 const (

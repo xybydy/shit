@@ -3,8 +3,8 @@ package solver
 import (
 	"fmt"
 
-	"shit/models"
-	"shit/pather"
+	"semesterproject/models"
+	"semesterproject/pather"
 )
 
 // Tile object in the Map.

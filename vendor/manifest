@@ -8,6 +8,14 @@
 			"revision": "468b03def8fbaf3d6b8a5407f1c26b443bb65b99",
 			"branch": "master",
 			"notests": true
+		},
+		{
+			"importpath": "github.com/go-yaml/yaml",
+			"repository": "https://github.com/go-yaml/yaml",
+			"vcs": "git",
+			"revision": "5420a8b6744d3b0345ab293f6fcba19c978f1183",
+			"branch": "v2",
+			"notests": true
 		}
 	]
 }

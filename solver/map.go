@@ -2,6 +2,7 @@ package solver
 
 import (
 	"fmt"
+	"io"
 	"strings"
 
 	"semesterproject/models"
@@ -112,9 +113,10 @@ func (m Map) renderMap(path []pather.Pather) string {
 }
 
 // Renders the map.
-func (m Map) PrintMap(path []pather.Pather) {
+func (m Map) PrintMap(i io.Writer, path []pather.Pather) {
 
-	fmt.Printf("\n%s\r", m.renderMap(path))
+	// fmt.Printf("\n%s\r", m.renderMap(path))
+	fmt.Fprintf(i, "\n%s\r", m.renderMap(path))
 
 }
 

@@ -171,7 +171,7 @@ func deliverStuff(o solver.Option) {
 			fmt.Fprintf(fileWriter, "Total time to deliver the product: %.2f\n\n", totalCost)
 
 			fmt.Fprintf(fileWriter, "MAP PREVIEW\n")
-			harita.PrintMap(o.Path[i])
+			harita.PrintMap(fileWriter, o.Path[i])
 
 		} else if i == len(o.Path)-1 {
 			from := o.Path[i][0].(*solver.Tile).Get().(*models.Workstation)
@@ -190,7 +190,7 @@ func deliverStuff(o solver.Option) {
 			fmt.Fprintf(fileWriter, "\nFrom %s back to storage\n\n", from.Name)
 			fmt.Fprintf(fileWriter, "Time to reach: %.2f\n", pathCost)
 			fmt.Fprintf(fileWriter, "MAP PREVIEW\n")
-			harita.PrintMap(path)
+			harita.PrintMap(fileWriter, path)
 
 			pathCost += unloadPathCost
 			totalUnloadCost += unloadCost
@@ -225,7 +225,7 @@ func deliverStuff(o solver.Option) {
 			fmt.Fprintf(fileWriter, "Total time to deliver the product: %.2f\n\n", totalCost)
 
 			fmt.Fprintf(fileWriter, "MAP PREVIEW\n")
-			harita.PrintMap(o.Path[i])
+			harita.PrintMap(fileWriter, o.Path[i])
 
 		}
 
@@ -295,7 +295,7 @@ func collectOne(from, to *models.Workstation) (float64, float64, float64) {
 	fmt.Fprintf(fileWriter, "Workstation Unload Time: %.2f\n", unloadCost)
 	fmt.Fprintf(fileWriter, "Total time spent: %.2f\n", unloadCost+pathCost+idleTime)
 	fmt.Fprintf(fileWriter, "\nMAP PREVIEW\n")
-	harita.PrintMap(path)
+	harita.PrintMap(fileWriter, path)
 	fmt.Fprintf(fileWriter, "%s\n", border)
 
 	return pathCost, unloadCost, idleTime

@@ -130,6 +130,8 @@ func ParseMap(input string) Map {
 	m := Map{}
 	for x, row := range strings.Split(strings.TrimSpace(input), "\n") {
 		for y, raw := range row {
+			if raw == 13 {continue} //boslugu okursa bu turu atla
+			
 			kind, ok := RuneType[raw]
 			if !ok {
 				kind = Wall

@@ -76,10 +76,20 @@ func buildRoute(workstations solver.Tiles, startPoint *solver.Tile) solver.Optio
 }
 
 func main() {
+	harita = solver.ParseMap(utils.GetMaze())
+	train = harita.GetKind(solver.Train)[0]
+	workstations = harita.GetKind(solver.Workstation)
+
 	models.LoadMaterials()
+
 	workstationsModels = models.LoadWorkstations()
+
+	filterUnusedStations()
+
 	trainModel = models.LoadTrain()
 	trainModel.LoadFromStorage(workstationsModels)
+
+	options = buildRoute(workstations, train)
 
 	getResult()
 
@@ -87,11 +97,6 @@ func main() {
 
 // Returns the results of the simulation and prints to the user
 func getResult() {
-	harita = solver.ParseMap(utils.GetMaze())
-	train = harita.GetKind(solver.Train)[0]
-	workstations = harita.GetKind(solver.Workstation)
-	options = buildRoute(workstations, train)
-
 	if !harita.CrossCheck() {
 		fmt.Println("Please check all locations in models and the map. Locations are not in-line")
 		fmt.Println("Simulation stops.")
@@ -262,6 +267,15 @@ func deliverStuff(o solver.Option) {
 	fmt.Fprintf(fileWriter, "Total unloading cost: %v\n", totalUnloadCost)
 	fmt.Fprintf(fileWriter, "Total idle time cost: %v\n", totalIdleCost)
 	fmt.Fprintf(fileWriter, "%s\n", border)
+
+}
+
+func filterUnusedStations() {
+	for i, station := range workstationsModels {
+		if harita.GetTile(station.X, station.Y).Kind != solver.Workstation {
+			workstationsModels = append(workstationsModels[:i], workstationsModels[i+1:]...)
+		}
+	}
 
 }
 

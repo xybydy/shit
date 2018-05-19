@@ -84,7 +84,7 @@ func (t *Train) checkStock(material string) bool {
 }
 
 // Unloads the material from train to workstation.
-func (t *Train) Unload(w *Workstation, start float64) float64 {
+func (t *Train) Unload(w *Workstation, start float64) {
 	time := 0.0
 	reqs, requestAmount := w.GetRequirements()
 
@@ -92,13 +92,11 @@ func (t *Train) Unload(w *Workstation, start float64) float64 {
 		for j := 0; j < requestAmount[i]; j++ {
 			if t.unloadMaterial(material.Name) {
 				time += w.LoadMaterial(material, start)
+			} else {
+				fmt.Println("There's no material left")
 			}
-			fmt.Println("Burasin sonra halledicez.")
-			return 0.0
-
 		}
 	}
-	return time
 }
 
 // Initilization function of ´Train´.

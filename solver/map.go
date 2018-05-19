@@ -99,9 +99,9 @@ func (m Map) renderMap(path []pather.Pather) string {
 	rows := make([]string, height)
 	for x := 0; x < width; x++ {
 		for y := 0; y < height; y++ {
-			t := m.GetTile(x, y)
+			t := m.GetTile(y, x)
 			r := ' '
-			if pathLocs[fmt.Sprintf("%d,%d", x, y)] {
+			if pathLocs[fmt.Sprintf("%d,%d", y, x)] {
 				r = TypeRunes[FinalPath]
 			} else if t != nil {
 				r = TypeRunes[t.Kind]

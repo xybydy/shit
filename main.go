@@ -27,6 +27,7 @@ var workstations solver.Tiles
 var options solver.Options
 var bestOption *solver.Option
 
+
 var trainModel models.Train
 var workstationsModels models.Workstations
 

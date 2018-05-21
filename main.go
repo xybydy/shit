@@ -51,6 +51,7 @@ func buildRoute(workstations solver.Tiles, startPoint *solver.Tile) solver.Optio
 	routes := solver.GetPermutation(workstations)
 
 	for _, route := range routes {
+
 		var totalCost float64
 		var innerCosts []float64
 
@@ -76,10 +77,20 @@ func buildRoute(workstations solver.Tiles, startPoint *solver.Tile) solver.Optio
 }
 
 func main() {
+	harita = solver.ParseMap(utils.GetMaze())
+	train = harita.GetKind(solver.Train)[0]
+	workstations = harita.GetKind(solver.Workstation)
+
 	models.LoadMaterials()
+
 	workstationsModels = models.LoadWorkstations()
+
+	filterUnusedStations()
+
 	trainModel = models.LoadTrain()
 	trainModel.LoadFromStorage(workstationsModels)
+
+	options = buildRoute(workstations, train)
 
 	getResult()
 
@@ -87,11 +98,6 @@ func main() {
 
 // Returns the results of the simulation and prints to the user
 func getResult() {
-	harita = solver.ParseMap(utils.GetMaze())
-	train = harita.GetKind(solver.Train)[0]
-	workstations = harita.GetKind(solver.Workstation)
-	options = buildRoute(workstations, train)
-
 	if !harita.CrossCheck() {
 		fmt.Println("Please check all locations in models and the map. Locations are not in-line")
 		fmt.Println("Simulation stops.")
@@ -176,19 +182,39 @@ func deliverStuff(o solver.Option) {
 
 		} else if i == len(o.Path)-1 {
 			from := o.Path[i][0].(*solver.Tile).Get().(*models.Workstation)
+			to := o.Path[i][len(o.Path[i])-1].(*solver.Tile).Get().(*models.Workstation)
 
-			fmt.Fprintf(fileWriter, "\nALL MATERIALS ARE DELIVERED!\n")
+			usedStations = append(usedStations, to)
+
+			pathCost = o.InnerCosts[i]
+			loadCost = to.LoadTime
+			totalCost := pathCost + loadCost
+
+			fmt.Fprintf(fileWriter, "From %s to %s\n\n", from.Name, to.Name)
+			fmt.Fprintf(fileWriter, "Train Stock: %s\n", trainModel.Stock.Details())
+
+			trainModel.Unload(to, globalTime+totalCost)
+
+			fmt.Fprintf(fileWriter, "\nWarehouse Demand:\n%s", to.PrintRequirements())
+			fmt.Fprintf(fileWriter, "\nLoad Time: %.2f\n", loadCost)
+			fmt.Fprintf(fileWriter, "Time to reach: %.2f\n", pathCost)
+			fmt.Fprintf(fileWriter, "Total time to deliver the product: %.2f\n\n", totalCost)
+
+			fmt.Fprintf(fileWriter, "MAP PREVIEW\n")
+			harita.PrintMap(fileWriter, o.Path[i])
+
+			fmt.Fprintf(fileWriter, "\n\nALL MATERIALS ARE DELIVERED!\n")
 			fmt.Fprintf(fileWriter, "\nTotal delivery cost: %.2f\n", totalPathCost)
 			fmt.Fprintf(fileWriter, "Total loading cost: %.2f\n", totalLoadCost)
 			fmt.Fprintf(fileWriter, "TOTAL COST: %.2f\n", globalTime)
 
-			from, unloadPathCost, unloadCost, idleTime := collectAll(from)
+			to, unloadPathCost, unloadCost, idleTime := collectAll(to)
 
-			path, cost, _ := pather.Path(harita.GetTile(from.X, from.Y), train)
+			path, cost, _ := pather.Path(harita.GetTile(to.X, to.Y), train)
 
 			pathCost += cost
 
-			fmt.Fprintf(fileWriter, "\nFrom %s back to storage\n\n", from.Name)
+			fmt.Fprintf(fileWriter, "\nFrom %s back to storage\n\n", to.Name)
 			fmt.Fprintf(fileWriter, "Time to reach: %.2f\n", pathCost)
 			fmt.Fprintf(fileWriter, "MAP PREVIEW\n")
 			harita.PrintMap(fileWriter, path)
@@ -242,6 +268,15 @@ func deliverStuff(o solver.Option) {
 	fmt.Fprintf(fileWriter, "Total unloading cost: %v\n", totalUnloadCost)
 	fmt.Fprintf(fileWriter, "Total idle time cost: %v\n", totalIdleCost)
 	fmt.Fprintf(fileWriter, "%s\n", border)
+
+}
+
+func filterUnusedStations() {
+	for i, station := range workstationsModels {
+		if harita.GetTile(station.X, station.Y).Kind != solver.Workstation {
+			workstationsModels = append(workstationsModels[:i], workstationsModels[i+1:]...)
+		}
+	}
 
 }
 

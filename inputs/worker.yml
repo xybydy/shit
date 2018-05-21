@@ -27,7 +27,7 @@
   unload_time: 3
   requirements: 
     - M1,5
-    - M3,2
+    - M3,1
 
 - ws2:
   name: "WS2"
@@ -71,3 +71,14 @@
   unload_time: 3
   requirements:
     - M5,8
+
+- ws6:
+  name: "WS6"
+  x: 13 #x location
+  y: 14 #y location
+  speed: 4
+  load_time: 2
+  unload_time: 3
+  requirements:
+    - M5,8
+    - M3,10
